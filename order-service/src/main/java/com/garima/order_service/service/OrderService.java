@@ -1,5 +1,7 @@
 package com.garima.order_service.service;
 
+import com.garima.order_service.dto.OrderRequest;
+import com.garima.order_service.dto.OrderResponse;
 import com.garima.order_service.dto.UserResponse;
 import com.garima.order_service.entity.Order;
 import com.garima.order_service.exceptions.OrderNotFoundException;
@@ -7,6 +9,7 @@ import com.garima.order_service.exceptions.UserNotFoundException;
 import com.garima.order_service.exceptions.UserServiceUnavailableException;
 import com.garima.order_service.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.ResourceAccessException;
@@ -18,15 +21,16 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OrderService {
 
-    private static final String USER_SERVICE_URL = "http://localhost:8080/users/";
     private final OrderRepository orderRepository;
     private final RestTemplate restTemplate;
+    @Value("${user-service.url}")
+    private String userServiceUrl;
 
-    public Order createOrder(Order order) {
+    public OrderResponse createOrder(OrderRequest request) {
         try {
 
             restTemplate.getForObject(
-                    USER_SERVICE_URL + order.getUserId(),
+                    userServiceUrl + request.getUserId(),
                     UserResponse.class);
 
         } catch (HttpClientErrorException.NotFound e) {
@@ -39,7 +43,16 @@ public class OrderService {
             throw new UserServiceUnavailableException(
                     "User Service is unavailable");
         }
-        return orderRepository.save(order);
+        Order order = new Order();
+        order.setAmount(request.getAmount());
+        order.setProductName(request.getProductName());
+        order.setUserId(request.getUserId());
+        Order newOrder = orderRepository.save(order);
+        OrderResponse response = new OrderResponse();
+        response.setAmount(newOrder.getAmount());
+        response.setProductName(newOrder.getProductName());
+        response.setUserId(newOrder.getUserId());
+        return response;
     }
 
     public Order getOrderById(Long orderId) {

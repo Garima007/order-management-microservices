@@ -1,7 +1,10 @@
 package com.garima.user_service.controller;
 
+import com.garima.user_service.dto.UserRequest;
+import com.garima.user_service.dto.UserResponse;
 import com.garima.user_service.entity.User;
 import com.garima.user_service.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,7 +18,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public User createUser(@RequestBody User user) {
+    public UserResponse createUser(@Valid @RequestBody UserRequest user) {
         return userService.createUser(user);
     }
 

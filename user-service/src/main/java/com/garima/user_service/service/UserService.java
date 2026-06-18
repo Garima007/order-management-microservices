@@ -1,5 +1,7 @@
 package com.garima.user_service.service;
 
+import com.garima.user_service.dto.UserRequest;
+import com.garima.user_service.dto.UserResponse;
 import com.garima.user_service.entity.User;
 import com.garima.user_service.exceptions.EmailAlreadyExistsException;
 import com.garima.user_service.exceptions.UserNotFoundException;
@@ -15,11 +17,19 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    public User createUser(User user) {
-        if (userRepository.existsByEmail(user.getEmail())) {
+    public UserResponse createUser(UserRequest request) {
+        if (userRepository.existsByEmail(request.getEmail())) {
             throw new EmailAlreadyExistsException("Email already exists");
         }
-        return userRepository.save(user);
+        User user = new User();
+        user.setName(request.getName());
+        user.setEmail(request.getEmail());
+        User savedUser = userRepository.save(user);
+        UserResponse response = new UserResponse();
+        response.setId(savedUser.getId());
+        response.setName(savedUser.getName());
+        response.setEmail(savedUser.getEmail());
+        return response;
     }
 
     public List<User> getAllUsers() {

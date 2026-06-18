@@ -1,0 +1,43 @@
+services:
+
+  postgres-user:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: userdb
+      POSTGRES_USER: springuser
+      POSTGRES_PASSWORD: spring123
+    ports:
+      - "5432:5432"
+
+  postgres-order:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: orderdb
+      POSTGRES_USER: orderuser
+      POSTGRES_PASSWORD: order123
+    ports:
+      - "5433:5432"
+
+  user-service:
+    build: ./user-service
+    ports:
+      - "8080:8080"
+    environment:
+      DB_URL: jdbc:postgresql://postgres-user:5432/userdb
+      DB_USERNAME: springuser
+      DB_PASSWORD: spring123
+    depends_on:
+      - postgres-user
+
+  order-service:
+    build: ./order-service
+    ports:
+      - "8081:8081"
+    environment:
+      DB_URL: jdbc:postgresql://postgres-order:5432/orderdb
+      DB_USERNAME: orderuser
+      DB_PASSWORD: order123
+      USER_SERVICE_URL: http://user-service:8080/users/
+    depends_on:
+      - postgres-order
+      - user-service

@@ -1,7 +1,10 @@
 package com.garima.order_service.controller;
 
+import com.garima.order_service.dto.OrderRequest;
+import com.garima.order_service.dto.OrderResponse;
 import com.garima.order_service.entity.Order;
 import com.garima.order_service.service.OrderService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,7 +18,7 @@ public class OrderController {
     private final OrderService orderService;
 
     @PostMapping
-    public Order createOrder(@RequestBody Order order){
+    public OrderResponse createOrder(@Valid @RequestBody OrderRequest order){
         return orderService.createOrder(order);
     }
 
