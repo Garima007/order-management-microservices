@@ -27,5 +27,8 @@ user-service:
 
 app:
   kafka:
+    producer:
+      properties:
+        spring.json.add.type.headers: false
     topics:
       order-created: order-created
