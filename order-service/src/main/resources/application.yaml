@@ -23,7 +23,7 @@ server:
   port: 8081
 
 user-service:
-  url: ${USER_SERVICE_URL:http://localhost:8080/users/}
+  url: ${USER_SERVICE_URL:http://localhost:8080}
 
 app:
   kafka:

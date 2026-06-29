@@ -1,5 +1,6 @@
 package com.garima.order_service.service;
 
+import com.garima.order_service.client.UserClient;
 import com.garima.order_service.dto.OrderRequest;
 import com.garima.order_service.dto.OrderResponse;
 import com.garima.order_service.dto.UserResponse;
@@ -14,11 +15,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.ResourceAccessException;
-import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -32,17 +31,13 @@ public class OrderService {
     Logger logger = LoggerFactory.getLogger(OrderService.class);
 
     private final OrderRepository orderRepository;
-    private final RestTemplate restTemplate;
     private final OrderEventProducer orderEventProducer;
-    @Value("${user-service.url}")
-    private String userServiceUrl;
+    private final UserClient userClient;
 
     public OrderResponse createOrder(OrderRequest request) {
         try {
             logger.info("Calling User Service to validate user with ID: {}", request.getUserId());
-            restTemplate.getForObject(
-                    userServiceUrl + request.getUserId(),
-                    UserResponse.class);
+            UserResponse user = userClient.getUser(request.getUserId());
 
         } catch (HttpClientErrorException.NotFound e) {
             logger.error("User with ID: {} not found  {}", request.getUserId(), e.getMessage());
