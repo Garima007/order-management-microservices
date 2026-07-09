@@ -18,8 +18,9 @@ public class OrderController {
     private final OrderService orderService;
 
     @PostMapping
-    public OrderResponse createOrder(@Valid @RequestBody OrderRequest order){
-        return orderService.createOrder(order);
+    public OrderResponse createOrder(@Valid @RequestBody OrderRequest order,
+                                     @RequestHeader("Authorization") String authorization){
+        return orderService.createOrder(order,authorization);
     }
 
     @GetMapping("/{id}")

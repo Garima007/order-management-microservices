@@ -34,10 +34,10 @@ public class OrderService {
     private final OrderEventProducer orderEventProducer;
     private final UserClient userClient;
 
-    public OrderResponse createOrder(OrderRequest request) {
+    public OrderResponse createOrder(OrderRequest request,String authorization) {
         try {
             logger.info("Calling User Service to validate user with ID: {}", request.getUserId());
-            UserResponse user = userClient.getUser(request.getUserId());
+            UserResponse user = userClient.getUser(authorization, request.getUserId());
 
         } catch (HttpClientErrorException.NotFound e) {
             logger.error("User with ID: {} not found  {}", request.getUserId(), e.getMessage());
