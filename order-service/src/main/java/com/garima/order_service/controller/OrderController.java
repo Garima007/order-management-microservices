@@ -6,6 +6,7 @@ import com.garima.order_service.entity.Order;
 import com.garima.order_service.service.OrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/orders")
 @RequiredArgsConstructor
+@Slf4j
 public class OrderController {
 
     private final OrderService orderService;
@@ -20,6 +22,7 @@ public class OrderController {
     @PostMapping
     public OrderResponse createOrder(@Valid @RequestBody OrderRequest order,
                                      @RequestHeader("Authorization") String authorization){
+        log.info("Authorization Header: {}", authorization);
         return orderService.createOrder(order,authorization);
     }
 

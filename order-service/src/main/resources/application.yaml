@@ -32,3 +32,8 @@ app:
         spring.json.add.type.headers: false
     topics:
       order-created: order-created
+
+logging:
+  level:
+    com.garima.order_service.client: DEBUG
+    feign: DEBUG
