@@ -1,5 +1,6 @@
 package com.garima.order_service.client;
 
+import com.garima.order_service.config.FeignConfig;
 import com.garima.order_service.dto.UserResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -8,7 +9,8 @@ import org.springframework.web.bind.annotation.RequestHeader;
 
 @FeignClient(
         name = "user-service",
-        url = "${user-service.url}/users"
+        url = "${user-service.url}/users",
+        configuration = FeignConfig.class
 )
 public interface UserClient {
     @GetMapping("/{id}")

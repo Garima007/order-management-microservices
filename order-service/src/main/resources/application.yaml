@@ -35,5 +35,4 @@ app:
 
 logging:
   level:
-    com.garima.order_service.client: DEBUG
-    feign: DEBUG
+    com.garima.order_service.client.UserClient: DEBUG

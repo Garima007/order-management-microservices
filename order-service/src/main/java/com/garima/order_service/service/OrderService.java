@@ -28,24 +28,23 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class OrderService {
 
-    Logger logger = LoggerFactory.getLogger(OrderService.class);
-
     private final OrderRepository orderRepository;
     private final OrderEventProducer orderEventProducer;
     private final UserClient userClient;
 
     public OrderResponse createOrder(OrderRequest request,String authorization) {
         try {
-            logger.info("Calling User Service to validate user with ID: {}", request.getUserId());
+            log.info("Calling User Service to validate user with ID: {}", request.getUserId());
+            log.info("Authorization = [{}]", authorization);
             UserResponse user = userClient.getUser(authorization, request.getUserId());
 
         } catch (HttpClientErrorException.NotFound e) {
-            logger.error("User with ID: {} not found  {}", request.getUserId(), e.getMessage());
+            log.error("User with ID: {} not found  {}", request.getUserId(), e.getMessage());
             throw new UserNotFoundException(
                     "User not found");
 
         } catch (ResourceAccessException e) {
-            logger.error("Failed to access User Service  {}" , e.getMessage());
+            log.error("Failed to access User Service  {}" , e.getMessage());
             throw new UserServiceUnavailableException(
                     "User Service is unavailable");
         }
@@ -74,7 +73,7 @@ public class OrderService {
         event.setAmount(savedOrder.getAmount());
         event.setTimestamp(LocalDateTime.now());
         orderEventProducer.publishOrderCreated(event);
-        logger.info("Published OrderCreatedEvent to Kafka for Order ID: {}", savedOrder.getId());
+        log.info("Published OrderCreatedEvent to Kafka for Order ID: {}", savedOrder.getId());
     }
 
     public Order getOrderById(Long orderId) {
