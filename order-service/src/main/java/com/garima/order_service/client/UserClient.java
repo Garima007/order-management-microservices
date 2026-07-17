@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestHeader;
 
 @FeignClient(
         name = "user-service",
-        url = "${user-service.url}/users",
         configuration = FeignConfig.class
 )
 public interface UserClient {
