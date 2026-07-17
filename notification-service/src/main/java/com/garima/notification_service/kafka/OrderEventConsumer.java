@@ -1,23 +1,14 @@
 package com.garima.notification_service.kafka;
 
 import com.garima.notification_service.event.OrderCreatedEvent;
-import lombok.extern.slf4j.Slf4j;
-import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 
-@RequiredArgsConstructor
 @Component
 @Slf4j
 public class OrderEventConsumer {
 
-    private final ObjectMapper objectMapper;
-
-    @KafkaListener(
-            topics = "order-created",
-            groupId = "notification-group-v99"
-    )
     @KafkaListener(
             topics = "order-created",
             groupId = "notification-group-v99"

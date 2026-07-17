@@ -46,7 +46,7 @@ services:
       DB_URL: jdbc:postgresql://postgres-order:5432/orderdb
       DB_USERNAME: orderuser
       DB_PASSWORD: order123
-      USER_SERVICE_URL: http://user-service:8080/users/
+      USER_SERVICE_URL: http://user-service:8080
     depends_on:
       - postgres-order
       - user-service

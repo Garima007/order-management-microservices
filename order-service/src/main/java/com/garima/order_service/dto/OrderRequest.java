@@ -14,7 +14,5 @@ public class OrderRequest {
     private Double amount;
     @NotNull
     private Long userId;
-    @NotNull
-    private String header;
 
 }

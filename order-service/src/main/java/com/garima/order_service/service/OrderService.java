@@ -3,7 +3,6 @@ package com.garima.order_service.service;
 import com.garima.order_service.client.UserClient;
 import com.garima.order_service.dto.OrderRequest;
 import com.garima.order_service.dto.OrderResponse;
-import com.garima.order_service.dto.UserResponse;
 import com.garima.order_service.entity.Order;
 import com.garima.order_service.event.OrderCreatedEvent;
 import com.garima.order_service.exceptions.OrderNotFoundException;
@@ -11,12 +10,10 @@ import com.garima.order_service.exceptions.UserNotFoundException;
 import com.garima.order_service.exceptions.UserServiceUnavailableException;
 import com.garima.order_service.kafka.OrderEventProducer;
 import com.garima.order_service.repository.OrderRepository;
+import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.ResourceAccessException;
 
 import java.time.LocalDateTime;
@@ -32,16 +29,25 @@ public class OrderService {
     private final OrderEventProducer orderEventProducer;
     private final UserClient userClient;
 
-    public OrderResponse createOrder(OrderRequest request,String authorization) {
+    public OrderResponse createOrder(OrderRequest request, String authorization) {
         try {
             log.info("Calling User Service to validate user with ID: {}", request.getUserId());
-            log.info("Authorization = [{}]", authorization);
-            UserResponse user = userClient.getUser(authorization, request.getUserId());
+            userClient.getUser(authorization, request.getUserId());
 
-        } catch (HttpClientErrorException.NotFound e) {
+        } catch (FeignException.NotFound e) {
             log.error("User with ID: {} not found  {}", request.getUserId(), e.getMessage());
             throw new UserNotFoundException(
                     "User not found");
+
+        } catch (FeignException.Unauthorized | FeignException.Forbidden e) {
+            log.error("User Service rejected authorization while validating user ID: {}", request.getUserId());
+            throw new UserServiceUnavailableException(
+                    "User Service rejected authorization");
+
+        } catch (FeignException e) {
+            log.error("Failed to call User Service  {}", e.getMessage());
+            throw new UserServiceUnavailableException(
+                    "User Service is unavailable");
 
         } catch (ResourceAccessException e) {
             log.error("Failed to access User Service  {}" , e.getMessage());
